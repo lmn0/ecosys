@@ -10,7 +10,7 @@ import (
 	"io"
 	"io/ioutil"
 	"log"
-	"logs"
+	"gcollect/logs"
 	"os"
 	"os/user"
 	"path/filepath"
@@ -18,8 +18,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
-	"tsar"
-	"utils"
+	"gcollect/tsar"
+	"gcollect/utils"
 )
 
 type arrayFlags []string

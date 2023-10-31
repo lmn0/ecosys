@@ -1,7 +1,7 @@
 package tsar
 
 import (
-  "utils"
+  "gcollect/utils"
   "os"
   "io"
   "fmt"

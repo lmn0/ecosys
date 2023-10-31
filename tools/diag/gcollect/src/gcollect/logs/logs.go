@@ -1,7 +1,7 @@
 package logs
 
 import (
-  "utils"
+  "gcollect/utils"
   "os"
   "io"
   "bufio"
