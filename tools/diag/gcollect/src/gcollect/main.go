@@ -1,6 +1,7 @@
 package main
 
 import (
+	"archive/zip"
 	"bufio"
 	"bytes"
 	"flag"
@@ -871,8 +872,62 @@ func main() {
 	if len(failed_nodes_array) > 0 {
 		fmt.Println("Failed nodes: ", failed_nodes_array)
 	}
+	//Zip the output dir
+	zip_output_dir(output_dir)
 
 	return
+}
+
+func zip_output_dir(output_dir string) error {
+    zip_output = output_dir+".zip"
+
+    zipped_file, err := os.Create(zip_output)
+    if err != nil {
+        return err
+    }
+    defer zipped_file.Close()
+
+    writer := zip.NewWriter(f)
+    defer writer.Close()
+
+    return filepath.Walk(output_dir, func(path string, info os.FileInfo, err error) error {
+        if err != nil {
+            return err
+        }
+
+        header, err := zip.FileInfoHeader(info)
+        if err != nil {
+            return err
+        }
+
+        header.Method = zip.Deflate
+
+        header.Name, err = filepath.Rel(filepath.Dir(output_dir), path)
+        if err != nil {
+            return err
+        }
+        if info.IsDir() {
+            header.Name += "/"
+        }
+
+        headerWriter, err := writer.CreateHeader(header)
+        if err != nil {
+            return err
+        }
+
+        if info.IsDir() {
+            return nil
+        }
+
+        f, err := os.Open(path)
+        if err != nil {
+            return err
+        }
+        defer f.Close()
+
+        _, err = io.Copy(headerWriter, f)
+        return err
+    })
 }
 
 func readFile(path string) ([]byte, error) {
